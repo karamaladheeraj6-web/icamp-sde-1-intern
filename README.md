@@ -25,7 +25,7 @@
 - Each task has its own folder in the repository. Work only within that folder.
 - Complete parts in order, each part depends on the previous.
 - Each part has an **Acceptance** block. Every criterion must pass before moving to the next part.
-- Commit after completing each part. Use the part name as the commit message, e.g. `Ticket 1.1 — Config and Layered Settings`.
+- Commit after completing each part. Use the part name as the commit message, e.g. `Ticket 1.1: Config and Layered Settings`.
 
 ---
 
@@ -37,7 +37,7 @@ For each task:
 2. Provide source code with the full file structure as defined for each task. 
 3. Provide `README.md` for each task, covering installation steps, environment variables, how to run, and all edge-cases, commands or configs.
 4. Ensure `.env.example` is present with all keys and blank values.
-5. Provide `WRITEUP.md` for each task. A write-up of (300-500 words) for each task including: 
+5. Provide `WRITEUP.md` for each task. A write-up of (300-500 words) for each task  including: 
     - Architecture decisions - why you did the way you did
     - One thing that was harder than expected and how you resolved it
     - What you would improve with more time

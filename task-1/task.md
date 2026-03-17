@@ -155,7 +155,7 @@ Introduce an artificial delay by running `feedwatch run --timeout 1`, hn should 
 
 `lib/parser.js` — parses raw XML and normalises items to a fixed schema.
 
-**`parseXML(xml)`** — accepts a raw XML string, detects whether it is RSS 2.0 or Atom 1.0, and returns an array of normalised items. Returns `[]` on any parse error — never throws.
+**`parseXML(xml)`** — accepts a raw XML string, detects whether it is RSS 2.0 or Atom 1.0, and returns an array of normalised items. Returns `[]` on any parse error, never throws.
 
 Normalised item schema:
 
@@ -175,9 +175,9 @@ Both formats produce this same shape. Missing fields default to empty string. `p
 
 ```bash
 # Create two fixture files:
-# tests/fixtures/rss.xml   — a valid RSS 2.0 feed with 2 items
-# tests/fixtures/atom.xml  — a valid Atom feed with 2 items
-# tests/fixtures/bad.xml   — malformed XML
+# tests/fixtures/rss.xml   - a valid RSS 2.0 feed with 2 items
+# tests/fixtures/atom.xml  - a valid Atom feed with 2 items
+# tests/fixtures/bad.xml   - malformed XML
 ```
 
 Write a quick test script (or use the test suite from Ticket 1.8):
@@ -297,7 +297,7 @@ feedwatch --help
 # works from any directory
 
 bun pack
-# inspect the tarball — no store data, no log files, no test fixtures
+# inspect the tarball, no store data, no log files, no test fixtures
 tar tf feedwatch-*.tgz
 ```
 

@@ -34,7 +34,7 @@ All JS files use ES Modules (`type="module"` on the `<script>` tag in `index.htm
 
 ---
 
-### Ticket 1 — State and Persistence
+### Ticket 1: State and Persistence
 
 **Objective:** Build the single source of truth for the board and wire it to localStorage so state survives a page reload.
 
@@ -68,7 +68,7 @@ The state shape is fixed:
 |---|---|
 | `loadState()` | Read from localStorage. Return parsed state if valid, default seed if missing or corrupt. |
 | `saveState()` | Serialise current state to localStorage. |
-| `addColumn(title)` | Append a new column. Reject empty title — throw `Error('Column title cannot be empty')`. |
+| `addColumn(title)` | Append a new column. Reject empty title, throw `Error('Column title cannot be empty')`. |
 | `removeColumn(id)` | Remove column by id. |
 | `renameColumn(id, newTitle)` | Update title. Reject empty string. |
 | `addCard(columnId, title, description)` | Append card to column. Reject empty title. |
@@ -103,7 +103,7 @@ All mutation functions return `void`. `loadState()` returns the state object. No
 **Sample I/O:**
 
 ```javascript
-// Initial load — localStorage empty
+// Initial load - localStorage empty
 loadState();
 // state.columns → [{id:'col-1',title:'To Do',cards:[]}, ...]
 
@@ -178,7 +178,7 @@ export function removeCard(cardId) {
 
 export function moveCard(cardId, direction) {
   // TODO: find card's current column index
-  // TODO: compute target column index — clamp at boundaries (no-op)
+  // TODO: compute target column index, clamp at boundaries (no-op)
   // TODO: remove from source, push to target, saveState
 }
 ```
@@ -202,7 +202,7 @@ moveCard(/* card id */, 'right');
 
 ---
 
-### Ticket 2 — Board Rendering
+### Ticket 2: Board Rendering
 
 **Objective:** Implement a `renderBoard()` function that rebuilds the entire board DOM from state on every call.
 
@@ -323,7 +323,7 @@ Add a card to the last column, `→` must be disabled, `←` must be enabled.
 
 ---
 
-### Ticket 3 — Event Wiring
+### Ticket 3: Event Wiring
 
 **Objective:** Wire all user interactions to state mutations and re-render, using a single delegated listener per board action.
 
@@ -448,7 +448,7 @@ All interactions work end-to-end:
 
 ---
 
-### Ticket 4 — Filtering
+### Ticket 4: Filtering
 
 **Objective:** Add a real-time search input that filters cards by title across all columns without modifying state.
 
