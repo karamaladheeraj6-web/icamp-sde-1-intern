@@ -104,7 +104,7 @@ async function run(arg) {
   const results = await Promise.all(
     storedFile.feeds.map(async (url) => {
       try {
-        const xml = await withRetry(() => fetchFeed(url), config.maxRetries);
+        const xml = await withRetry(() => fetchFeed(url), config.retries);
         const items = parseXML(xml);
         return { url, items, status: "ok" };
       } catch (e) {
@@ -128,13 +128,20 @@ async function run(arg) {
         console.log(item.link);
         if(arg != 'all') {
           storedFile.seen[url].push(item.id);
-        }        
+        }
+        
         newCount++;
       }
     }
   }
 
   saveToStore(storedFile);
+
+  if (arg == 'json') {
+    // Strict JSON output (no logs)
+    process.stdout.write(JSON.stringify(results, null, 2));
+    return;
+  }
 
   if (newCount === 0) {
     console.log("No new items.");
@@ -187,6 +194,42 @@ async function removeFeed(url) {
     console.log("Feed not found");
   }
 }
+function resolveFeed(input, feeds) {
+  return feeds.find((f) => f === input || f.includes(input));
+}
+async function readFeed(input) {
+  const storedFile = storeToFile();
+  const config = loadConfig();
+  const url = resolveFeed(input, storedFile.feeds);
+
+  if (!url) {
+    console.log("Feed not found");
+    return;
+  }
+
+  try {
+    const xml = await withRetry(() => fetchFeed(url), config.retries);
+    const items = parseXML(xml);
+
+    if (items.length === 0) {
+      console.log("No items found.");
+      return;
+    }
+
+    console.log(`
+Feed: ${url}
+`);
+
+    items.slice(0, 10).forEach((item, i) => {
+      console.log(`${i + 1}. ${item.title || "(no title)"}`);
+      console.log(`   ${item.link}`);
+      if (item.pubDate) console.log(`   ${item.pubDate}`);
+      console.log("");
+    });
+  } catch (e) {
+    console.error(`Error reading ${url}:`, e.message);
+  }
+}
 
 const [,, cmd, arg] = process.argv;
 
@@ -196,6 +239,9 @@ switch (cmd) {
     break;
   case "remove":
     removeFeed(arg);
+    break;
+  case "read": 
+    await readFeed(arg); 
     break;
   case "list":
     listFeeds();
