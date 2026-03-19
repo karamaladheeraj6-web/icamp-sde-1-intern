@@ -1,0 +1,6 @@
+{
+    "timeout": 8000,
+    "retries": 3,
+    "maxItems": 10,
+    "logLevel": "info"
+}
