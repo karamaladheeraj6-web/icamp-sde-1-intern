@@ -98,7 +98,7 @@ async function withRetry(fn, maxRetries = 3, isRetryable = defaultIsRetryable) {
   throw lastError;
 }
 
-async function run() {
+async function run(arg) {
   const storedFile = storeToFile();
   const config = loadConfig();
   const results = await Promise.all(
@@ -122,12 +122,13 @@ async function run() {
     const seenSet = new Set(storedFile.seen[url]);
 
     for (const item of items) {
-      if (!seenSet.has(item.id)) {
+      if (!seenSet.has(item.id) || arg == 'all') {
         console.log(`\n🆕 [${url}]`);
         console.log(item.title);
         console.log(item.link);
-
-        storedFile.seen[url].push(item.id);
+        if(arg != 'all') {
+          storedFile.seen[url].push(item.id);
+        }        
         newCount++;
       }
     }
@@ -200,7 +201,7 @@ switch (cmd) {
     listFeeds();
     break;
   case "run":
-    await run();
+    await run(arg);
     break;
   default:
     console.log(`\nfeedwatch commands:\n
