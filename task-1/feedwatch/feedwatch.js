@@ -1,12 +1,24 @@
 import { existsSync, readFileSync, writeFileSync } from "fs";
 
 const storeFile = "store.json";
+const CONFIG_FILE = "feedwatch.config.json";
 
 function storeToFile() {
   if (!existsSync(storeFile)) {
     return { feeds: [], seen: {} };
   }
   return JSON.parse(readFileSync(storeFile, "utf-8"));
+}
+function loadConfig() {
+  if (!existsSync(CONFIG_FILE)) {
+    return {
+      "timeout": 8000,
+      "retries": 3,
+      "maxItems": 10,
+      "logLevel": "info"
+    };
+  }
+  return JSON.parse(readFileSync(CONFIG_FILE, "utf-8"));
 }
 
 function saveToStore(storedFile) {
@@ -41,18 +53,72 @@ function parseItems(xml) {
   return items;
 }
 
+function defaultIsRetryable(err) {
+  if (!err) return false;
+
+  const msg = String(err.message || err);
+
+  const network = /fetch|network|timeout|ECONN|ENOTFOUND|EAI_AGAIN/i.test(msg);
+
+  const httpMatch = msg.match(/HTTP\s(\d{3})/i);
+  if (httpMatch) {
+    const code = Number(httpMatch[1]);
+    if (code >= 500) return true;   // retry
+    if (code >= 400 && code < 500) return false;
+  }
+  return network;
+}
+
+function sleep(ms) {
+  return new Promise((res) => setTimeout(res, ms));
+}
+
+async function withRetry(fn, maxRetries = 3, isRetryable = defaultIsRetryable) {
+  let attempt = 0;
+  let lastError;
+
+  while (attempt <= maxRetries) {
+    try {
+      return await fn();
+    } catch (err) {
+      lastError = err;
+
+      const retry = isRetryable(err);
+      if (!retry || attempt === maxRetries) {
+        throw err;
+      }
+
+      const base = 200 * Math.pow(2, attempt);
+
+      const jitter = Math.floor(Math.random() * 100);
+
+      const delay = base + jitter;
+
+      console.warn(
+        `Retrying (${attempt + 1}/${maxRetries}) after ${delay}ms:`,
+        err.message || err
+      );
+
+      await sleep(delay);
+      attempt++;
+    }
+  }
+
+  throw lastError;
+}
+
 async function run() {
   const storedFile = storeToFile();
-
+  const config = loadConfig();
   const results = await Promise.all(
     storedFile.feeds.map(async (url) => {
       try {
-        const xml = await fetchFeed(url);
+        const xml = await withRetry(() => fetchFeed(url), config.maxRetries);
         const items = parseItems(xml);
-        return { url, items };
+        return { url, items, status: "ok" };
       } catch (e) {
         console.error(`Error fetching ${url}:`, e.message);
-        return { url, items: [] };
+        return { url, items: [e.message], status: "Failed" };
       }
     })
   );
