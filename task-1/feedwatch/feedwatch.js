@@ -1,4 +1,5 @@
 import { existsSync, readFileSync, writeFileSync } from "fs";
+import { parseXML } from './lib/parser.js';
 
 const storeFile = "store.json";
 const CONFIG_FILE = "feedwatch.config.json";
@@ -41,28 +42,6 @@ async function fetchFeed(url) {
   const res = await fetch(url);
   const text = await res.text();
   return text;
-}
-
-function parseItems(xml) {
-  const items = [];
-
- const rssItems = xml.match(/<item>[\s\S]*?<\/item>/g) || [];
-  for (const item of rssItems) {
-    const title = item.match(/<title>(.*?)<\/title>/)?.[1] || "";
-    const link = item.match(/<link>(.*?)<\/link>/)?.[1] || "";
-    const guid = item.match(/<guid.*?>(.*?)<\/guid>/)?.[1] || link;
-    items.push({ id: guid, title, link });
-  }
-
-  const atomItems = xml.match(/<entry>[\s\S]*?<\/entry>/g) || [];
-  for (const item of atomItems) {
-    const title = item.match(/<title.*?>(.*?)<\/title>/)?.[1] || "";
-    const link = item.match(/<link[^>]*href=\"(.*?)\"/)?.[1] || "";
-    const id = item.match(/<id>(.*?)<\/id>/)?.[1] || link;
-    items.push({ id, title, link });
-  }
-
-  return items;
 }
 
 function defaultIsRetryable(err) {
@@ -126,7 +105,7 @@ async function run() {
     storedFile.feeds.map(async (url) => {
       try {
         const xml = await withRetry(() => fetchFeed(url), config.maxRetries);
-        const items = parseItems(xml);
+        const items = parseXML(xml);
         return { url, items, status: "ok" };
       } catch (e) {
         console.error(`Error fetching ${url}:`, e.message);
