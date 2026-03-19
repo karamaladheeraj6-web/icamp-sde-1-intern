@@ -22,8 +22,7 @@ async function fetchFeed(url) {
 function parseItems(xml) {
   const items = [];
 
-  // RSS
-  const rssItems = xml.match(/<item>[\s\S]*?<\/item>/g) || [];
+ const rssItems = xml.match(/<item>[\s\S]*?<\/item>/g) || [];
   for (const item of rssItems) {
     const title = item.match(/<title>(.*?)<\/title>/)?.[1] || "";
     const link = item.match(/<link>(.*?)<\/link>/)?.[1] || "";
@@ -31,7 +30,6 @@ function parseItems(xml) {
     items.push({ id: guid, title, link });
   }
 
-  // Atom
   const atomItems = xml.match(/<entry>[\s\S]*?<\/entry>/g) || [];
   for (const item of atomItems) {
     const title = item.match(/<title.*?>(.*?)<\/title>/)?.[1] || "";
