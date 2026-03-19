@@ -1,5 +1,8 @@
 {
   "name": "feedwatch",
+  "version": "1.0.0",
+  "bin": { "feedwatch": "./feedwatch.js" },
+  "files": ["feedwatch.js", "commands/", "lib/"],
   "module": "feedwatch.js",
   "type": "module",
   "private": true,

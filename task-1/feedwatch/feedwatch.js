@@ -251,9 +251,12 @@ switch (cmd) {
     break;
   default:
     console.log(`\nfeedwatch commands:\n
-  add <url>   Add a feed
-  list        List feeds
-  remove      remove feeds
-  run         Check for new items
+  add <url>     Add a feed
+  list          List feeds
+  remove <url>  Remove feeds
+  run           Check for new items
+  run all       View all items
+  run json      View all items in json format
+  read <url>    View all items in readable format
 `);
 }
