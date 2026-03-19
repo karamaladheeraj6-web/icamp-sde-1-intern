@@ -10,15 +10,27 @@ function storeToFile() {
   return JSON.parse(readFileSync(storeFile, "utf-8"));
 }
 function loadConfig() {
-  if (!existsSync(CONFIG_FILE)) {
-    return {
+  let fileConfig = {
       "timeout": 8000,
       "retries": 3,
       "maxItems": 10,
       "logLevel": "info"
     };
+
+  if (existsSync(CONFIG_FILE)) {
+    fileConfig = JSON.parse(readFileSync(CONFIG_FILE, "utf-8"));
   }
-  return JSON.parse(readFileSync(CONFIG_FILE, "utf-8"));
+  const envRetries = process.env.FEEDWATCH_RETRIES;
+  const envtimeout = process.env.FEEDWATCH_TIMEOUT;
+  const envmaxItems = process.env.FEEDWATCH_MAX_ITEMS;
+  const envlogLevel = process.env.FEEDWATCH_LOG_LEVEL;
+  return {
+    ...fileConfig,
+    retries: envRetries ? Number(envRetries) : fileConfig.retries,
+    timeout: envtimeout ? Number(envtimeout) : fileConfig.timeout,
+    maxItems: envmaxItems ? Number(envmaxItems) : fileConfig.maxItems,
+    logLevel: envlogLevel ? Number(envlogLevel) : fileConfig.logLevel
+  };
 }
 
 function saveToStore(storedFile) {
