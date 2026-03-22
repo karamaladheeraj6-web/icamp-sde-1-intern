@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Kanban Board</title>
+  <style>
+    body { font-family: Arial; padding: 3px;}
+    #board { 
+      isplay: flex;}
+    .column { 
+      width: 500px; 
+      border-left: 1px solid #ccc;
+      border-top: 1px solid #ccc;
+      border-right: 1px solid #ccc;
+      margin-top: 10px;
+      float: left;
+      margin-right: 10px;
+    }
+    .column h3{
+      border-bottom: 2px solid #ccc;
+      padding: 2px;
+    }
+    .card { 
+      background: white; 
+      padding: 8px; 
+      margin: 6px 0; 
+      cursor: grab; 
+      border-bottom: 1px solid #ccc;
+      height: 25px;
+    }
+    .btncls {
+      padding: 8px;
+      background: green;
+      border: 1px solid #ccc;
+      color: white;
+      border-radius: 5px;
+      margin-left: 2px;
+    }
+    .btnDelCls {
+      padding: 7px;
+      background: red;
+      border: 1px solid #ccc;
+      color: white;
+      border-radius: 5px;
+    }
+    .btnDelClsCard {
+      padding: 4px;
+      background: red;
+      border: 1px solid #ccc;
+      color: white;
+      border-radius: 5px;
+      float: right;
+    }
+    .header {
+      background: green;
+      color: white;
+      font-size: 50px;
+      padding: 5px;
+      margin-bottom: 5px;
+    }
+    .titleCls {
+      padding: 5px;
+      font-size: 20px;
+      border-bottom: 1px solid #ccc;
+      margin-bottom: 4px;
+      height: 34px;
+    }
+  </style>
+</head>
+<body>
+<div class="header">Kanban Board</div>
+<button class="btncls" id="add-column">Add Column</button>
+<input style="padding: 10px;float: right;" id="search" placeholder="Search cards..." />
+<h3 style="border-bottom: solid 1px #ccc;"></h3>
+
+<div id="board"></div>
+
+<script type="module" src="./main.js"></script>
+</body>
+</html>
