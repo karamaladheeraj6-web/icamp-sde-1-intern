@@ -4,7 +4,9 @@ import {
   deleteColumn,
   addCard,
   deleteCard,
-  moveCard
+  moveCard,
+  updateCard,
+  renameColumn
 } from "./state.js";
 
 import { renderBoard } from "./board.js";
@@ -42,9 +44,13 @@ export function initEvents() {
     const cardId = e.target.dataset.id;
 
     if (action === "add-card") {
-      const title = prompt("Card title?");
-      if (title) {
-        addCard(colId, title);
+      const title = prompt("Card title");
+      const description = prompt("Card Description");
+      if(description == null || description == undefined) {
+        description = "";
+      }
+      if (title && description) {
+        addCard(colId, title, description);
         renderBoard();
       }
     }
@@ -56,6 +62,30 @@ export function initEvents() {
 
     if (action === "delete-card") {
       deleteCard(colId, cardId);
+      renderBoard();
+    }
+    if (action === "edit-card") {
+      const cardEl = e.target.closest(".card");
+
+      const currentTitle = cardEl.querySelector(".card-title").textContent;
+      const currentDesc = cardEl.querySelector(".card-desc").textContent;
+
+      const newTitle = prompt("Edit title:", currentTitle);
+      if (newTitle === null) return;
+
+      const newDesc = prompt("Edit description:", currentDesc);
+
+      updateCard(cardId, newTitle, newDesc || "");
+      renderBoard();
+    }
+
+    if (action === "rename-column") {
+      const currentTitle = document.getElementById("coltitle-"+colId).innerHTML;
+
+      const newTitle = prompt("New column name:", currentTitle);
+      if (!newTitle) return;
+
+      renameColumn(colId, newTitle);
       renderBoard();
     }
   });

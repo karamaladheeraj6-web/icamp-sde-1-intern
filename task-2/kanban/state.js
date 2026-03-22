@@ -37,11 +37,12 @@ export function deleteColumn(columnId) {
 }
 
 // CARD
-export function addCard(columnId, title) {
+export function addCard(columnId, title, description) {
   const col = state.columns.find(c => c.id === columnId);
   col.cards.push({
     id: crypto.randomUUID(),
-    title
+    title,
+    description
   });
   save();
 }
@@ -60,5 +61,25 @@ export function moveCard(fromColId, toColId, cardId) {
   from.cards = from.cards.filter(c => c.id !== cardId);
   to.cards.push(card);
 
+  save();
+}
+
+export function updateCard(cardId, title, description) {
+  for (const col of state.columns) {
+    const card = col.cards.find(c => c.id === cardId);
+    if (card) {
+      card.title = title;
+      card.description = description;
+      save();
+      return;
+    }
+  }
+}
+
+export function renameColumn(columnId, newTitle) {
+  const col = state.columns.find(c => c.id === columnId);
+  if (!col) return;
+
+  col.title = newTitle;
   save();
 }

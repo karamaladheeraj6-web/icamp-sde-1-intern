@@ -12,9 +12,10 @@ export function renderBoard() {
     colEl.dataset.id = col.id;
 
     colEl.innerHTML = `
-      <div class="titleCls">${col.title}        
+      <div class="titleCls"><span id="coltitle-${col.id}">${col.title}</span>        
         <button style="float:right;" class="btnDelCls" data-action="delete-column" data-col="${col.id}">✕</button>
-        <button style="float:right;" class="btncls" data-action="add-card" data-col="${col.id}">+ Card</button>
+        <button class="editTitleIconCls" data-action="rename-column" data-col="${col.id}">✏️</button>
+        <button style="float:right;" class="btncls" data-action="add-card" data-col="${col.id}">+ Card</button>        
       </div>
       
       <div class="cards">
@@ -25,10 +26,13 @@ export function renderBoard() {
               <div class="card" draggable="true"
                    data-id="${card.id}"
                    data-col="${col.id}">
-                <span class="card-title">${card.title}</span>
+                <b>Title: </b><span class="card-title">${card.title}</span></br>
+                <b>Description: </b><span class="card-desc">${card.description}</span>
                 <button class="btnDelClsCard" data-action="delete-card"
                         data-id="${card.id}"
                         data-col="${col.id}">✕</button>
+                <button class="editIconCls" data-action="edit-card"
+                  data-id="${card.id}">✏️</button>
               </div>
             `).join("")
         }
